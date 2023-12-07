@@ -17,7 +17,7 @@ LADIES_COLOURING = 120
 
 class calendar:
     def __init__(self):
-        self.appointments = {}
+        self.appointments = []
 
     def create_weekly_calendar(self, date, description):
         if date not in self.appointments:
@@ -26,15 +26,15 @@ class calendar:
             print(f"Appointment added on {date}: {description}")
 
     def load_scheduled_appointments(self, date):
+        input("Enter appointment filename: ")
+
+    def find_appointment_by_time(self, date):
         if date in self.appointments:
             print(f"Appointments on {date}:")
             for appointment in self.appointments[date]:
                 print(f"- {appointment}")
         else:
             print(f"No appointments on {date}")
-
-    def find_appointment_by_time():
-        pass
 
     def show_appointment_by_name():
         pass
