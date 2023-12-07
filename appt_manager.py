@@ -14,35 +14,44 @@ MENS_CUT = 50
 LADIES_CUT = 80
 MENS_COLOURING = 50
 LADIES_COLOURING = 120
+file = "appointments1.csv"
+appointments = []
+        
 
-class calendar:
-    def __init__(self):
-        self.appointments = []
+def create_weekly_calendar(date, description):
+    if date not in appointments:
+        appointments[date] = []
+        appointments[date].append(description)
+        print(f"Appointment added on {date}: {description}")
 
-    def create_weekly_calendar(self, date, description):
-        if date not in self.appointments:
-            self.appointments[date] = []
-            self.appointments[date].append(description)
-            print(f"Appointment added on {date}: {description}")
+def load_scheduled_appointments():
+        filename = input("Enter appointment filename: ")
+        while filename != file:
 
-    def load_scheduled_appointments(self, date):
-        input("Enter appointment filename: ")
-
-    def find_appointment_by_time(self, date):
-        if date in self.appointments:
+            if filename == file:
+                file = open("/Users/jihungwak/Downloads/appointments1.csv", 'r')
+                lines = file.readlines()
+                number_appointment = len(lines)
+                print(f"{number_appointment} previously scheduled appointments have been loaded")
+                file.close
+            else:
+                filename = input("File not found. Re-enter appointment filename: ")
+             
+def find_appointment_by_time(date):
+        if date in appointments:
             print(f"Appointments on {date}:")
-            for appointment in self.appointments[date]:
+            for appointment in appointments[date]:
                 print(f"- {appointment}")
         else:
             print(f"No appointments on {date}")
 
-    def show_appointment_by_name():
+def show_appointment_by_name():
         pass
 
-    def show_appointments_by_day():
+def show_appointments_by_day():
         pass
 
-    def save_scheduled_appointments():
+def save_scheduled_appointments():
         pass
 
 def print_menu():
