@@ -57,9 +57,9 @@ def save_scheduled_appointments():
 def print_menu():
     '''Print Menu Function'''
     print("Jojo's Hair Salon Appointment Manager")
-    print("=" * 37)
+    print("=" * 34)
     print(" 1) Schedule an appointment")
-    print(" 2) Find Appointment by name")
+    print(" 2) Find appointment by name")
     print(" 3) Print calendar for a specific day")
     print(" 4) Cancel an appointment")
     print(" 9) Exit the system")
@@ -121,6 +121,9 @@ def main():
     for appt in appt_list:
         print(appt)
 
+<<<<<<< Updated upstream
 if __name__ == "__main__":
     main()
 
+=======
+>>>>>>> Stashed changes
