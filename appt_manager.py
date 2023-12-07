@@ -120,10 +120,3 @@ def main():
         "Phone", "Day", "Start", "End", "Type"))
     for appt in appt_list:
         print(appt)
-
-<<<<<<< Updated upstream
-if __name__ == "__main__":
-    main()
-
-=======
->>>>>>> Stashed changes
