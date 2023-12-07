@@ -14,20 +14,19 @@ LADIES_CUT = 80
 MENS_COLOURING = 50
 LADIES_COLOURING = 120
 
-
-def print_menu():
-    pass
-
 def create_weekly_calendar():
     pass
 
 def load_scheduled_appointments():
     pass
 
+def print_menu():
+    pass
+
 def find_appointment_by_time():
     pass
 
-def show_appointment_by_name():
+def show_appointments_by_name():
     pass
 
 def show_appointments_by_day():
