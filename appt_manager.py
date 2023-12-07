@@ -6,6 +6,7 @@
 #
 
 # imports
+from datetime import datetime
 import appointment as ap
 
 # constants
@@ -14,6 +15,35 @@ LADIES_CUT = 80
 MENS_COLOURING = 50
 LADIES_COLOURING = 120
 
+class calendar:
+    def __init__(self):
+        self.appointments = {}
+
+    def create_weekly_calendar(self, date, description):
+        if date not in self.appointments:
+            self.appointments[date] = []
+            self.appointments[date].append(description)
+            print(f"Appointment added on {date}: {description}")
+
+    def load_scheduled_appointments(self, date):
+        if date in self.appointments:
+            print(f"Appointments on {date}:")
+            for appointment in self.appointments[date]:
+                print(f"- {appointment}")
+        else:
+            print(f"No appointments on {date}")
+
+    def find_appointment_by_time():
+        pass
+
+    def show_appointment_by_name():
+        pass
+
+    def show_appointments_by_day():
+        pass
+
+    def save_scheduled_appointments():
+        pass
 
 def print_menu():
     '''Print Menu Function'''
@@ -29,29 +59,11 @@ def print_menu():
     while menu not in ['1', '2', '3', '4', '9']:
         menu = input("Enter your selection: ")
     return menu
-
-def create_weekly_calendar():
-    pass
-
-def load_scheduled_appointments():
-    pass
-
-def find_appointment_by_time():
-    pass
-
-def show_appointment_by_name():
-    pass
-
-def show_appointments_by_day():
-    pass
-
-def save_scheduled_appointments():
-    pass
-
 def main():
     # Here are the types of appointments:
     # 0 - Available, 1 = Mens cut $50, 2= Ladies cut $80, 3= Mens Colouring $50, 4= Ladies Colouring $120
     # create a list of 7 appointments for Saturday (between 9:00 and 15:00 start time)
+
     appt_list = []
     day = "Saturday"
     for time in range(9, 16):
@@ -99,3 +111,7 @@ def main():
         "Phone", "Day", "Start", "End", "Type"))
     for appt in appt_list:
         print(appt)
+
+if __name__ == "__main__":
+    main()
+
