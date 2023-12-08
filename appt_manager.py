@@ -7,22 +7,26 @@
 
 # imports
 from datetime import datetime
-import appointment as ap
+import appointment
 
 # constants
 MENS_CUT = 50
 LADIES_CUT = 80
 MENS_COLOURING = 50
 LADIES_COLOURING = 120
-file = "appointments1.csv"
-appointments = []
-        
+
+# do not create another class
+# rather in appt manager like a regular 
+# create a list for appointment objects
+# dont need to 
+# getting rid of class calendar
+# call that from your main
+# one of the functions, find appointment by time to locate in calendar that particular time slot, if avaliable then gather information, and then call schedule method 
+# call the appointment class
+
 
 def create_weekly_calendar(date, description):
-    if date not in appointments:
-        appointments[date] = []
-        appointments[date].append(description)
-        print(f"Appointment added on {date}: {description}")
+    pass
 
 def load_scheduled_appointments():
         filename = input("Enter appointment filename: ")
@@ -36,30 +40,25 @@ def load_scheduled_appointments():
                 file.close
             else:
                 filename = input("File not found. Re-enter appointment filename: ")
-             
-def find_appointment_by_time(date):
-        if date in appointments:
-            print(f"Appointments on {date}:")
-            for appointment in appointments[date]:
-                print(f"- {appointment}")
-        else:
-            print(f"No appointments on {date}")
+
+def find_appointment_by_time():
+    pass
 
 def show_appointment_by_name():
-        pass
+    pass
 
 def show_appointments_by_day():
-        pass
+    pass
 
 def save_scheduled_appointments():
-        pass
+    pass
 
 def print_menu():
     '''Print Menu Function'''
     print("Jojo's Hair Salon Appointment Manager")
-    print("=" * 34)
+    print("=" * 37)
     print(" 1) Schedule an appointment")
-    print(" 2) Find appointment by name")
+    print(" 2) Find Appointment by name")
     print(" 3) Print calendar for a specific day")
     print(" 4) Cancel an appointment")
     print(" 9) Exit the system")
@@ -69,54 +68,39 @@ def print_menu():
         menu = input("Enter your selection: ")
     return menu
 def main():
-    # Here are the types of appointments:
-    # 0 - Available, 1 = Mens cut $50, 2= Ladies cut $80, 3= Mens Colouring $50, 4= Ladies Colouring $120
-    # create a list of 7 appointments for Saturday (between 9:00 and 15:00 start time)
-
-    appt_list = []
-    day = "Saturday"
-    for time in range(9, 16):
-        appt_list.append(ap.Appointment(day, time))
-
-    # Book the first appointment slot (9 AM) for Harvey Wallbanger for a Men's Cut (appt_type = 1)
-    current_appt = appt_list[0]
-    current_appt.schedule("Harvey", "403-233-3944", 1)
-
-    # Book the second appointment slot (10 AM) for Sara for a Ladies Colouring
-    current_appt = appt_list[1]
-    current_appt.schedule("Sara", "403-233-3945", 4)
-
-    # Go through all the appointments and find the noon hour slot and book Jenny for a cut
-    found = False
-    index = 0
-    while index < len(appt_list) and not found:
-        current_appt = appt_list[index]
-        # is this appointment the noon hour appointment for Saturday available?
-        if current_appt.get_day_of_week() == "Saturday" and \
-           current_appt.get_start_time_hour() == 12 and \
-           current_appt.get_appt_type() == 0:
-            found = True
-        index += 1
-    if found:
-        # book it!
-        current_appt.set_client_name("Jenny")
-        current_appt.set_client_phone("403-867-5309")
-        current_appt.set_appt_type(2)  # 2 - Ladies Cut
+    '''main function'''
+    print("Starting the appointment Manager system")
+    print("Weekly Calendar Created")
+    option_load = input("Would you like to load previously scheduled appointments from a file (Y/N)?: ")
+    if option_load == 'Y' or 'y':
+        load_scheduled_appointments()
     else:
-        print("Appointment entry not found")
+        create_weekly_calendar()
 
-    # Print only scheduled appointments using format_record()
-    print("Scheduled appointment records:")
-    for appt in appt_list:
-        if appt.get_appt_type() != 0:
-            print(appt.format_record())
+    menu = print_menu()
+    while menu in ['1', '2', '3', '4', '9']:
+        menu = print_menu()
+        if menu == '1':
+            print("** Schedule an appointment **")
+            appointment_set = appointment.Appointment()
+            appointment_set._day_of_week = input("What day: ")
+            appointment_set._start_time_hour = input("Enter start hour (24 hour clock): ")
+            appointment_set._client_name = input("Client Name: ")
+            appointment_set._client_phone = input("Client Phone: ")
+           
+        elif menu == '2':
+            pass
+ 
+        elif menu == '3':
+            pass
+ 
+        elif menu == '4':
+            pass
+ 
+        else:
+            print('\n**Exit System**')
+    else:
+        pass
 
-    # Cancel Sara's appointment
-    current_appt = appt_list[1]
-    current_appt.cancel()
-
-    # Print report of all appointment times using string method
-    print("\n\n{:20s}{:15s}{:10s}{:10s}{:10s}{:20s}".format("Client Name",
-        "Phone", "Day", "Start", "End", "Type"))
-    for appt in appt_list:
-        print(appt)
+if __name__ == "__main__":
+    main()
