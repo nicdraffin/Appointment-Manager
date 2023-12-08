@@ -95,9 +95,10 @@ def save_scheduled_appointments(appointment_list):
             for appointment in appointment_list:
                 if appointment.get_appt_type() != 0:
                     file.write(appointment.format_record() + "\n")
-        print(f"{len(calendar)} appointments saved to {filename}.")
+        print(f"{len(appointment_list)} appointments saved to {filename}.")
     except Exception as e:
         print(f"Error saving appointments: {e}")
+        ####
 
 
 
@@ -116,7 +117,7 @@ def print_menu():
     while menu not in ['1', '2', '3', '4', '9']:
         menu = input("Enter your selection: ")
     return menu
-def main():
+def main(appointment_list):
     '''main function'''
     print("Starting the appointment Manager system")
     create_weekly_calendar()
@@ -139,27 +140,33 @@ def main():
             client_phone = input("Client phone: ")
             print("Appointment types")
             print(Appointment.get_appt_type_desc)
-            appt_type = int(input("Type of appointment: "))
+            appt_type = int(input("Type of Appointment: "))
             appointment = find_appointment_by_time(day, start_time_hour, appointment_list)
             if appointment and Appointment.get_appt_type() == 0:
                 Appointment.schedule(client_name, client_phone, appt_type)
-                print("Appointment scheduled successfully.")
+                print(f"Ok, {client_name}'s appointment is scheduled!")
             else:
-                print("Invalid time or appointment already booked.")
+                print("Sorry that time slot is not in the weekly calendar!")
+
 
         elif menu == '2':
-            pass
+            show_appointment_by_name(appointment_list)
  
         elif menu == '3':
-            pass
- 
+            show_appointments_by_day(appointment_list)
+            
         elif menu == '4':
-            pass
- 
+            print("** Cancel an appointment **")
+            enter_day = input("What day: ")
+            start_hour = input("Enter start hour (24 hour clock): ")
+            current_appt = appointment_list[start_hour - 1]
+            current_appt.remove()
+            start_hour_end = start_hour + 1
+            print(f"Appointment: {enter_day} for {start_hour}-{start_hour_end} has been cancelled!")
         else:
             print('\n**Exit System**')
-    else:
-        pass
+            save_scheduled_appointments(appointment_list)
+    
 
 if __name__ == "__main__":
     main()
