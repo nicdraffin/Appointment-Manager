@@ -7,7 +7,7 @@
 
 # imports
 from datetime import datetime
-import appointment
+from appointment import Appointment
 
 # constants
 MENS_CUT = 50
@@ -25,33 +25,82 @@ LADIES_COLOURING = 120
 # call the appointment class
 
 
-def create_weekly_calendar(date, description):
-    pass
+def create_weekly_calendar():
+    appointment_list = []
+    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    for day in days:
+        for hour in range(9, 17):
+            appointment_list.append(Appointment(day, hour))
+    return appointment_list
 
-def load_scheduled_appointments():
-        filename = input("Enter appointment filename: ")
-        while filename != file:
 
-            if filename == file:
-                file = open("/Users/jihungwak/Downloads/appointments1.csv", 'r')
+def load_scheduled_appointments(appointment_list):
+        file_name = input("Enter appointment filename: ")
+        while file_name != file:
+            if file_name == file:
+                file = open(file_name, 'r')
                 lines = file.readlines()
-                number_appointment = len(lines)
-                print(f"{number_appointment} previously scheduled appointments have been loaded")
-                file.close
+                for line in lines:
+                    client_name, client_phone, appt_type, day_of_week, start_time_hour = line.strip().split(',')
+                    appointment = find_appointment_by_time(day_of_week, int(start_time_hour), appointment_list)
+                if appointment:
+                    Appointment.schedule(client_name, client_phone, int(appt_type))
             else:
                 filename = input("File not found. Re-enter appointment filename: ")
+        
+     
+        return len(lines)
 
-def find_appointment_by_time():
-    pass
+                
+def find_appointment_by_time(day, start_time_hour, appointment_list):
+    appointment_time = Appointment()
+    for appointment in appointment_list:
+        if appointment_time.get_day_of_week() == day and appointment_time.get_start_time_hour() == start_time_hour:
+            return appointment
+    return None
+    
 
-def show_appointment_by_name():
-    pass
 
-def show_appointments_by_day():
-    pass
+def show_appointment_by_name(appointment_list):
+    print("** Find appointment by name **")
+    client_name = input("Enter Client Name: ")
+    print(f"Appointments for {client_name}")
+    matching_appointments = [appointment for appointment in appointment_list if client_name.lower() in Appointment.get_client_name().lower()]
+    if matching_appointments:
+        for appointment in matching_appointments:
+            print(Appointment.__str__(appointment))
+    else:
+        print("No appointments found.")
 
-def save_scheduled_appointments():
-    pass
+def show_appointments_by_day(appointment_list):
+    print("** Print calendar for a specific day **")
+    day_of_week = input("Enter day of week: ")
+    print(f"Appointment for {day_of_week}")
+    matching_appointments = [appointment for appointment in appointment_list if Appointment.get_day_of_week().lower() == day_of_week.lower()]
+  
+    for appointment in matching_appointments:
+        print(Appointment.__str__(appointment))
+
+def save_scheduled_appointments(appointment_list):
+    option_save = input("Would nyou like to save all scheduled appointments to a file (Y/N)?")
+    if option_save == 'Y' or 'y':
+        file_name = input("Enter appointment filename: ")
+        if file_name == file:
+
+
+    if not filename(""):
+        filename += ""
+    try:
+        with open(filename, 'w') as file:
+            for appointment in appointment_list:
+                if appointment.get_appt_type() != 0:
+                    file.write(appointment.format_record() + "\n")
+        print(f"{len(calendar)} appointments saved to {filename}.")
+    except Exception as e:
+        print(f"Error saving appointments: {e}")
+
+
+
 
 def print_menu():
     '''Print Menu Function'''
@@ -70,24 +119,34 @@ def print_menu():
 def main():
     '''main function'''
     print("Starting the appointment Manager system")
+    create_weekly_calendar()
     print("Weekly Calendar Created")
     option_load = input("Would you like to load previously scheduled appointments from a file (Y/N)?: ")
     if option_load == 'Y' or 'y':
         load_scheduled_appointments()
     else:
-        create_weekly_calendar()
+        pass
+        
 
     menu = print_menu()
     while menu in ['1', '2', '3', '4', '9']:
         menu = print_menu()
         if menu == '1':
             print("** Schedule an appointment **")
-            appointment_set = appointment.Appointment()
-            appointment_set._day_of_week = input("What day: ")
-            appointment_set._start_time_hour = input("Enter start hour (24 hour clock): ")
-            appointment_set._client_name = input("Client Name: ")
-            appointment_set._client_phone = input("Client Phone: ")
-           
+            day = input("What day: ")
+            start_time_hour = int(input("Enter start hour(24 hour clock): "))
+            client_name = input("Client name: ")
+            client_phone = input("Client phone: ")
+            print("Appointment types")
+            print(Appointment.get_appt_type_desc)
+            appt_type = int(input("Type of appointment: "))
+            appointment = find_appointment_by_time(day, start_time_hour, appointment_list)
+            if appointment and Appointment.get_appt_type() == 0:
+                Appointment.schedule(client_name, client_phone, appt_type)
+                print("Appointment scheduled successfully.")
+            else:
+                print("Invalid time or appointment already booked.")
+
         elif menu == '2':
             pass
  
