@@ -8,120 +8,140 @@
 from datetime import datetime
 from appointment import Appointment
 import os
- 
+
 # constants
 MENS_CUT = 50
 LADIES_CUT = 80
 MENS_COLOURING = 50
 LADIES_COLOURING = 120
- 
-# do not create another class
-# rather in appt manager like a regular
-# create a list for appointment objects
-# dont need to
-# getting rid of class calendar
-# call that from your main
-# one of the functions, find appointment by time to locate in calendar that particular time slot, if avaliable then gather information, and then call schedule method
-# call the appointment class
- 
- 
+
+# create weekly calendar function
+# creates a lsit and a for loop to create the specific appointments for those days
+# returns the list 
 def create_weekly_calendar():
+    '''Create Weekly Calendar Function'''
     appointment_list = []
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     for day in days:
         for hour in range(9, 17):
             appointment = Appointment(day, hour)
-            appointment_list.append(Appointment(appointment))
+            appointment_list.append(appointment)
     return appointment_list
- 
- 
+
+# loads in existing CSV files into the appointment list, and returns the amount of appointments loaded in 
 def load_scheduled_appointments(appointment_list):
+    '''Load '''
     file_path = input("Enter appointment filename: ")
     while not os.path.exists(file_path):
         file_path = input("File not found. Re-enter appointment filename: ")
+
     if os.path.exists(file_path):
         file = open(file_path, 'r')
         lines = file.readlines()
         for line in lines:
             client_name, client_phone, appt_type, day_of_week, start_time_hour = line.strip().split(',')
             appointment = find_appointment_by_time(appointment_list, day_of_week, int(start_time_hour))
-        if appointment:
-            Appointment.schedule(client_name, client_phone, int(appt_type))
-    lines_num = len(lines)
-    print(f"{lines_num} previously scheduled appointments have been loaded")
-    return len(lines)
- 
-               
+            if appointment and appointment.get_appt_type() == 0:
+                appointment.schedule(client_name, client_phone, int(appt_type))
+        lines_num = len(lines)
+        file.close()
+        print(f"{lines_num} previously scheduled appointments have been loaded")
+        return lines_num
+
+
 def find_appointment_by_time(appointment_list, day, start_time_hour):
     for appointment in appointment_list:
-        if Appointment.get_day_of_week() == day and Appointment.get_start_time_hour() == start_time_hour:
+        if appointment.get_day_of_week().lower() == day.lower() and appointment.get_start_time_hour() == start_time_hour:
             return appointment
     return None
- 
+
+
 def show_appointment_by_name(appointment_list):
-    # found = False
-    # index = 0
     print("** Find appointment by name **")
-    client_name = input("Enter Client Name: ").lower() #change this into able to search for partial client name in get client name and have boolean
-    print(f"Appointments for {client_name}")
-    for appointment in appointment_list:
-        if client_name.lower() in Appointment.get_client_name.lower():
-            print(Appointment.__str__(appointment))
+    client_name = input("Enter Client Name: ").lower()
+    matching_appointments = [appointment for appointment in appointment_list if client_name in appointment.get_client_name().lower()]
+    
+    if matching_appointments:
+        print(f"Appointments for {client_name}:")
+        print_appointment_table(matching_appointments)
     else:
         print("No appointments found.")
- 
- 
+
+
 def show_appointments_by_day(appointment_list):
     print("** Print calendar for a specific day **")
-    day_of_week = input("Enter day of week: ")
-    print(f"Appointment for {day_of_week}")
-    for appointment in appointment_list:
-        if day_of_week.lower() in Appointment.get_day_of_week.lower():
-            print(Appointment.__str__(appointment))
+    day_of_week = input("Enter day of week: ").lower()
+    day_appointments = [appointment for appointment in appointment_list if day_of_week in appointment.get_day_of_week().lower()]
+    
+    if day_appointments:
+        print(f"Appointments for {day_of_week}:")
+        print_appointment_table(day_appointments)
     else:
         print("No appointments found.")
-    # iterate through appointment and then with if statement
-    #for appointment in matching_appointments:
-        # print(Appointment.__str__(appointment))
- 
-def save_scheduled_appointments(file_name, appointment_list):
-    option_save = input("Would you like to save all scheduled appointments to a file (Y/N)?")
-    if option_save == 'Y' or 'y': # somewhat similiar from load , check exists is the same. IF the file does exist then prompt , then theres a loop to have them re enter file name
+
+
+def print_appointment_table(appointments):
+    print("{:<20} {:<15} {:<15} {:<15} {:<15} {:<15}".format("Client Name", "Phone", "Day", "Start ", "End ", "Type"))
+    print("-" * 100)
+    for appointment in appointments:
+        print("{:<20} {:<15} {:<15} {:<15} {:<15} {:15}".format(
+            appointment.get_client_name(),
+            appointment.get_client_phone(),
+            appointment.get_day_of_week(),
+            f"{appointment.get_start_time_hour()}:00",
+            f"{appointment.get_end_time_hour()}:00",
+            f"{appointment.get_appt_type_desc()}"
+        ))
+
+
+def save_scheduled_appointments(appointment_list):
+    option_save = input("Would you like to save all scheduled appointments to a file (Y/N)? ").lower()
+    if option_save in ['y', 'Y']:
         file_name = input("Enter appointment filename: ")
-        while os.path.exists(file_name):
-            option_ow = input("File already exists. Do you want to overwrite it (Y/N)? ")
-            while option_ow == 'Y' or 'y':
-                file = open(file_name, 'w')
-                while appt_type != 0:
-                    client_name, client_phone, appt_type, day_of_week, start_time_hour = line.strip().split(',')
-                    appointment = find_appointment_by_time(appointment_list, day_of_week, int(start_time_hour))
-                    print(f"{len(appointment_list)} appointments saved to {file_name}.")
-                file.close()
-                file_name = input("Enter appointment filename: ")
+        if os.path.exists(file_name):
+            while os.path.exists(file_name):
+                option_ow = input("File already exists. Do you want to overwrite it (Y/N)? ").lower()
+                if option_ow in ['y']:
+                    file = open(file_name, 'w')
+                    for appointment in appointment_list:
+                        if appointment.get_client_name():
+                            file.write(f"{appointment.format_record()}\n")
+                    file.close()
+                    file = open(file_name, 'r')
+                    lines = file.readlines()
+                    for line in lines:
+                        client_name, client_phone, appt_type, day_of_week, start_time_hour = line.strip().split(',')
+                        appointment = find_appointment_by_time(appointment_list, day_of_week, int(start_time_hour))
+                    lines_num = len(lines)
+                    print(f"{lines_num} appointments saved to {file_name}.")
+                    file.close()
+                    print("Good Bye!")
+                    break
+                elif option_ow in ['n']:
+                    file_name = input("Enter appointment filename: ")
+                else:
+                    print("Invalid option. Please enter 'Y' or 'N'.")     
         else:
             file = open(file_name, 'x')
+            for appointment in appointment_list:
+                if appointment.get_client_name():
+                    file.write(f"{appointment.format_record()}\n")
+            file = open(file_name, 'r')
+            lines = file.readlines()
+            for line in lines:
+                client_name, client_phone, appt_type, day_of_week, start_time_hour = line.strip().split(',')
+                appointment = find_appointment_by_time(appointment_list, day_of_week, int(start_time_hour))
+            lines_num = len(lines)
+            print(f"{lines_num} appointments saved to {file_name}.")
+            file.close()
+            print("Good Bye!")
     else:
         print("Good Bye!")
-            
-    option_save = input("Would you like to save all scheduled appointments to a file (Y/N)?")
-    if option_save == 'Y' or 'y': # somewhat similiar from load , check exists is the same. IF the file does exist then prompt , then theres a loop to have them re enter file name
-        file_name = input("Enter appointment filename: ")
-        while os.path.exists(file_name):
-            option_ow = input("File already exists. Do you want to overwrite it (Y/N)? ")
-            while option_ow == 'Y' or 'y':
-                file = open(file_name, 'w')
-                while appt_type != 0:
-                    client_name, client_phone, appt_type, day_of_week, start_time_hour = line.strip().split(',')
-                    appointment = find_appointment_by_time(appointment_list, day_of_week, int(start_time_hour))
-                    print(f"{len(appointment_list)} appointments saved to {file_name}.")
-                file.close()
-                file_name = input("Enter appointment filename: ")
-        else:
-            file = open(file_name, 'x')   
-            
+
+
 def print_menu():
     '''Print Menu Function'''
-    print("Jojo's Hair Salon Appointment Manager")
+    print("\nJojo's Hair Salon Appointment Manager")
     print("=" * 37)
     print(" 1) Schedule an appointment")
     print(" 2) Find Appointment by name")
@@ -133,57 +153,66 @@ def print_menu():
     while menu not in ['1', '2', '3', '4', '9']:
         menu = input("Enter your selection: ")
     return menu
- 
- 
+
+
 def main():
-    '''main function'''
-    print("Starting the appointment Manager system")
-    create_weekly_calendar()
+    print("Starting the Appointment Manager system")
+    appointment_list = create_weekly_calendar()
     print("Weekly Calendar Created")
-    option_load = input("Would you like to load previously scheduled appointments from a file (Y/N)?: ")
-    if option_load == 'Y' or 'y':
-        load_scheduled_appointments()
-   
-    menu = print_menu()
-    while menu in ['1', '2', '3', '4', '9']:
+    option_load = input("Would you like to load previously scheduled appointments from a file (Y/N)?: ").lower()
+    if option_load in ['y', 'Y']:
+        load_scheduled_appointments(appointment_list)
+
+    while True:
         menu = print_menu()
+
         if menu == '1':
-            appointment_list = create_weekly_calendar()
-            print("** Schedule an appointment **")
+            print("\n** Schedule an appointment **")
+            days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
             day = input("What day: ")
-            start_time_hour = int(input("Enter start hour(24 hour clock): "))
-            client_name = input("Client name: ")
-            client_phone = input("Client phone: ")
-            print("Appointment types")
-            print(Appointment.get_appt_type_desc)
-            appt_type = int(input("Type of Appointment: ")) # 3 wat branch here for all three posssibilitys
-            appointment = find_appointment_by_time(day, start_time_hour, appointment_list)
-            if appointment and Appointment.get_appt_type() == 0:
-                Appointment.schedule(client_name, client_phone, appt_type)
-                print(f"Ok, {client_name}'s appointment is scheduled!")
-            else:
+            start_time_hour = int(input("Enter start hour (24-hour clock): "))
+            appointment = find_appointment_by_time(appointment_list, day, start_time_hour)
+ 
+ 
+            if appointment and appointment.get_appt_type() == 0:
+                client_name = input("Client Name: ")
+                client_phone = input("Client Phone: ")
+                appt_type = int(input("Type of Appointment: "))
+                print()
+                appointment.schedule(client_name, client_phone, appt_type)
+                print(f"OK, {client_name}'s appointment is scheduled!")
+            
+            elif day not in days:
                 print("Sorry that time slot is not in the weekly calendar!")
- 
- 
+            
+            
+            else:
+                print("Sorry, that time slot is booked already!")
+
         elif menu == '2':
             show_appointment_by_name(appointment_list)
- 
+
         elif menu == '3':
             show_appointments_by_day(appointment_list)
-           
+
         elif menu == '4':
             print("** Cancel an appointment **")
-            enter_day = input("What day: ")
-            start_hour = input("Enter start hour (24 hour clock): ") # call find by time to find index, and thenv have the three possibilitys again and then have the appointments is booked and go ahead and cancel
-            # find from the method
-            current_appt = appointment_list[start_hour]
-            current_appt.cancel()
-            start_hour_end = start_hour + 1
-            print(f"Appointment: {enter_day} for {start_hour}-{start_hour_end} has been cancelled!")
-        else:
-            print('\n**Exit System**')
+            day_to_cancel = input("Enter day: ")
+            start_hour_to_cancel = int(input("Enter start hour (24-hour clock): "))
+            appointment_to_cancel = find_appointment_by_time(appointment_list, day_to_cancel, start_hour_to_cancel)
+
+            if appointment_to_cancel:
+                appointment_to_cancel.cancel()
+                print(f"Appointment: {day_to_cancel} {start_hour_to_cancel:02}:00 - {appointment_to_cancel.get_end_time_hour():02}:00 for {appointment_to_cancel.get_client_name()} has been cancelled!")
+            else:
+                print("That time slot isn't booked and doesn't need to be cancelled")
+
+        elif menu == '9':
+            print("** Exit the system **")
             save_scheduled_appointments(appointment_list)
-   
- 
+            
+            break
+
+
 if __name__ == "__main__":
     main()
